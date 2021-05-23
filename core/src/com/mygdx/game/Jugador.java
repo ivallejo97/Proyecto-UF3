@@ -1,7 +1,10 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -32,6 +35,9 @@ public class Jugador {
     boolean muerto = false;
     Temporizador temporizadorFireRate = new Temporizador(10);
     Temporizador temporizadorRespawn = new Temporizador(120, false);
+    Music music[] = new Music[2];
+    float volume = 1.5f;
+
 
     Jugador() {
         x = 100;
@@ -79,8 +85,15 @@ public class Jugador {
 
         if (vidas == 0){
             batch.draw(animacionmuerta.obtenerFrame(), x, y, w, h);
+            music[1].stop();
+            music[0] = Gdx.audio.newMusic(Gdx.files.getFileHandle("explosion.mp3", Files.FileType.Internal));
+            music[0].setVolume(volume);
+            music[0].play();
         } else if (muerto){
             batch.draw(animaciontocada.obtenerFrame(), x, y, w, h);
+            music[1] = Gdx.audio.newMusic(Gdx.files.getFileHandle("impacto.mp3", Files.FileType.Internal));
+            music[1].setVolume(volume);
+            music[1].play();
         } else{
             batch.draw(animacion.obtenerFrame(), x, y, w, h);
         }

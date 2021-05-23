@@ -1,7 +1,10 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,13 +22,19 @@ public class MyGdxGame extends ApplicationAdapter {
 	Emoticonos emoticonos;
 	List<Enemigo> enemigos;
 	List<Enemigo2> enemigos2;
+	List<Meteorito> meteoritos;
 	List<Disparo> disparosAEliminar;
 	List<Enemigo> enemigosAEliminar;
 	List<Enemigo2> enemigosAEliminar2;
+	List<Meteorito> meteoritosAEliminar;
 	Temporizador temporizadorNuevoEnemigo;
 	Temporizador temporizadorNuevoEnemigo2;
+	Temporizador temporizadorNuevoMeteorito;
 	ScoreBoard scoreboard;
 	boolean gameover;
+	Sound sound[] = new Sound[3];
+	Music music;
+	float volume = 1.0f;
 
 
 	@Override
@@ -35,6 +44,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		font.setColor(Color.WHITE);
 		font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		font.getData().setScale(2f);
+
 
 		inicializarJuego();
 
@@ -46,13 +56,22 @@ public class MyGdxGame extends ApplicationAdapter {
 		emoticonos = new Emoticonos();
 		enemigos = new ArrayList<>();
 		enemigos2 = new ArrayList<>();
+		meteoritos = new ArrayList<>();
 		temporizadorNuevoEnemigo = new Temporizador(120);
 		temporizadorNuevoEnemigo2 = new Temporizador(240);
+		temporizadorNuevoMeteorito = new Temporizador(240);
 		disparosAEliminar = new ArrayList<>();
 		enemigosAEliminar = new ArrayList<>();
 		enemigosAEliminar2 = new ArrayList<>();
+		meteoritosAEliminar = new ArrayList<>();
 		scoreboard = new ScoreBoard();
-
+		sound[0] = Gdx.audio.newSound( Gdx.files.getFileHandle("boo.mp3", FileType.Internal) );
+		sound[0].setVolume(1,volume);
+		sound[1] = Gdx.audio.newSound( Gdx.files.getFileHandle("boo.mp3", FileType.Internal) );
+		sound[2] = Gdx.audio.newSound( Gdx.files.getFileHandle("boo.mp3", FileType.Internal) );
+		music = Gdx.audio.newMusic(Gdx.files.getFileHandle("cancion_fondo.mp3", FileType.Internal));
+		music.setVolume(volume);
+		music.play();
 		gameover = false;
 	}
 
@@ -73,6 +92,7 @@ public class MyGdxGame extends ApplicationAdapter {
 						disparosAEliminar.add(disparo);
 						enemigosAEliminar.add(enemigo);
 						jugador.puntos++;
+						sound[0].play();
 						break;
 					}
 				}
@@ -80,6 +100,7 @@ public class MyGdxGame extends ApplicationAdapter {
 				if (!gameover && !jugador.muerto && Utils.solapan(enemigo.x, enemigo.y, enemigo.w, enemigo.h, jugador.x, jugador.y, jugador.w, jugador.h)) {
 					jugador.morir();
 					enemigosAEliminar.add(enemigo);
+					sound[0].play();
 					if (jugador.vidas == 0){
 						gameover = true;
 					}
@@ -125,6 +146,34 @@ public class MyGdxGame extends ApplicationAdapter {
 			}
 		}
 
+		if (jugador.puntos >=2){
+			if (temporizadorNuevoMeteorito.suena()) meteoritos.add(new Meteorito());
+
+			for (Meteorito meteorito : meteoritos) meteorito.update();              // enemigos.forEach(Enemigo::update);
+
+			for (Meteorito meteorito : meteoritos) {
+				for (Disparo disparo : jugador.disparos) {
+					if (Utils.solapan(disparo.x, disparo.y, disparo.w, disparo.h, meteorito.x, meteorito.y, meteorito.w, meteorito.h)) {
+						disparosAEliminar.add(disparo);
+						meteoritosAEliminar.add(meteorito);
+						break;
+					}
+				}
+
+				if (!gameover && !jugador.muerto && Utils.solapan(meteorito.x, meteorito.y, meteorito.w, meteorito.h, jugador.x, jugador.y, jugador.w, jugador.h)) {
+					jugador.morir();
+					meteoritosAEliminar.add(meteorito);
+					if (jugador.vidas == 0){
+						gameover = true;
+					}
+				}
+				if (jugador.puntos >= 20){
+					temporizadorNuevoEnemigo.frecuencia = 60;
+				}
+				if (meteorito.y < -meteorito.w)meteoritosAEliminar.add(meteorito);
+			}
+		}
+
 
 		for (Disparo disparo : jugador.disparos)
 			if (disparo.x > 640)
@@ -136,10 +185,15 @@ public class MyGdxGame extends ApplicationAdapter {
 			for (Enemigo2 enemigo2 : enemigosAEliminar2) enemigos2.remove(enemigo2);
 			enemigosAEliminar2.clear();
 		}
+		if (jugador.puntos>=2){
+			for (Meteorito meteorito : meteoritosAEliminar) meteoritos.remove(meteorito);
+			meteoritosAEliminar.clear();
+		}
 		disparosAEliminar.clear();
 		enemigosAEliminar.clear();
 
 		if(gameover) {
+			music.stop();
 			int result = scoreboard.update(jugador.puntos);
 			if(result == 1) {
 				inicializarJuego();
@@ -165,9 +219,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		if (jugador.puntos >= 20){
 			for (Enemigo2 enemigo2 : enemigos2) enemigo2.render(batch);
 		}
+		if (jugador.puntos>=2){
+			for (Meteorito meteorito : meteoritos) meteorito.render(batch);
+		}
 		font.draw(batch, "" + jugador.vidas, 55, 430);
 		font.draw(batch, "" + jugador.puntos, 55, 470);
-
 
 
 		if (gameover){

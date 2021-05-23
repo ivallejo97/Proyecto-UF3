@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Enemigo2 {
-    Texture texture = new Texture("alien.png");
+    Texture texture = new Texture("alien2.png");
     float x, y, w, h, vx, vy;
     Temporizador cambioVelocidad = new Temporizador(100);
     int vidas = 2;
