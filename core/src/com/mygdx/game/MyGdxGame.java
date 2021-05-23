@@ -34,7 +34,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	boolean gameover;
 	Sound sound[] = new Sound[3];
 	Music music;
-	float volume = 1.0f;
+	float volume = 0.5f;
 
 
 	@Override
@@ -108,14 +108,20 @@ public class MyGdxGame extends ApplicationAdapter {
 					}
 				}
 				if (jugador.puntos >= 20){
-					temporizadorNuevoEnemigo.frecuencia = 60;
+					temporizadorNuevoEnemigo.frecuencia = 80;
+				}
+				if (jugador.puntos >= 60){
+					temporizadorNuevoEnemigo.frecuencia = 40;
+				}
+				if (jugador.puntos >= 90){
+					temporizadorNuevoEnemigo.frecuencia = 30;
 				}
 				if (enemigo.y < -enemigo.w)enemigosAEliminar.add(enemigo);
 			}
 
 
 
-		if (jugador.puntos >= 20){
+		if (jugador.puntos >= 30){
 
 			if (temporizadorNuevoEnemigo2.suena()) enemigos2.add(new Enemigo2());
 			for (Enemigo2 enemigo2 : enemigos2) enemigo2.update();
@@ -145,7 +151,15 @@ public class MyGdxGame extends ApplicationAdapter {
 						gameover = true;
 					}
 				}
-
+				if (jugador.puntos >= 50){
+					temporizadorNuevoEnemigo.frecuencia = 120;
+				}
+				if (jugador.puntos >= 80){
+					temporizadorNuevoEnemigo.frecuencia = 80;
+				}
+				if (jugador.puntos >= 120){
+					temporizadorNuevoEnemigo.frecuencia = 60;
+				}
 				if (enemigo2.y < -enemigo2.w) enemigosAEliminar2.add(enemigo2);
 			}
 		}
@@ -174,8 +188,14 @@ public class MyGdxGame extends ApplicationAdapter {
 						gameover = true;
 					}
 				}
-				if (jugador.puntos >= 20){
+				if (jugador.puntos >= 35){
+					temporizadorNuevoEnemigo.frecuencia = 120;
+				}
+				if (jugador.puntos >= 90){
 					temporizadorNuevoEnemigo.frecuencia = 60;
+				}
+				if (jugador.puntos >= 130){
+					temporizadorNuevoEnemigo.frecuencia = 40;
 				}
 				if (meteorito.y < -meteorito.w)meteoritosAEliminar.add(meteorito);
 			}
@@ -199,8 +219,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		disparosAEliminar.clear();
 		enemigosAEliminar.clear();
 
+
+
 		if(gameover) {
-			music.stop();
 			int result = scoreboard.update(jugador.puntos);
 			if(result == 1) {
 				inicializarJuego();
