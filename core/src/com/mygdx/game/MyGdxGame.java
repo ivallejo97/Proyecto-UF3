@@ -67,8 +67,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		scoreboard = new ScoreBoard();
 		sound[0] = Gdx.audio.newSound( Gdx.files.getFileHandle("boo.mp3", FileType.Internal) );
 		sound[0].setVolume(1,volume);
-		sound[1] = Gdx.audio.newSound( Gdx.files.getFileHandle("boo.mp3", FileType.Internal) );
-		sound[2] = Gdx.audio.newSound( Gdx.files.getFileHandle("boo.mp3", FileType.Internal) );
+		sound[1] = Gdx.audio.newSound( Gdx.files.getFileHandle("kingboo.mp3", FileType.Internal) );
+		sound[1].setVolume(1,volume);
+		sound[2] = Gdx.audio.newSound( Gdx.files.getFileHandle("meteorito.mp3", FileType.Internal) );
+		sound[2].setVolume(1,volume);
 		music = Gdx.audio.newMusic(Gdx.files.getFileHandle("cancion_fondo.mp3", FileType.Internal));
 		music.setVolume(volume);
 		music.play();
@@ -126,8 +128,9 @@ public class MyGdxGame extends ApplicationAdapter {
 						if (enemigo2.vidas == 0){
 							enemigosAEliminar2.add(enemigo2);
 							jugador.puntos++;
+							sound[1].play();
+							break;
 						}
-						break;
 					}
 				}
 
@@ -136,6 +139,7 @@ public class MyGdxGame extends ApplicationAdapter {
 					enemigo2.morir();
 					if (enemigo2.vidas == 0){
 						enemigosAEliminar2.add(enemigo2);
+						sound[1].play();
 					}
 					if (jugador.vidas == 0){
 						gameover = true;
@@ -147,7 +151,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 
 		if (jugador.puntos >=2){
-			if (temporizadorNuevoMeteorito.suena()) meteoritos.add(new Meteorito());
+			if (temporizadorNuevoMeteorito.suena()){
+				meteoritos.add(new Meteorito());
+				sound[2].play();
+			}
 
 			for (Meteorito meteorito : meteoritos) meteorito.update();              // enemigos.forEach(Enemigo::update);
 
