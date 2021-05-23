@@ -100,7 +100,7 @@ public class ScoreBoard {
         batch.draw(background, 60, 120, 520, 320);
 
         if(!saved) {
-            font.draw(batch, "INTRODUZCA SU NOMBRE", 140, 400);
+            font.draw(batch, "INTRODUZCA  SU  NOMBRE", 140, 400);
 
             font.getData().setScale(3);
             font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
